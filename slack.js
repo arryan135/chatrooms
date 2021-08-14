@@ -2,11 +2,13 @@ const express = require("express");
 const app = express();
 const socketio = require("socket.io");
 const namespaces = require("./data/namespaces");
+const PORT = process.env.PORT || 9000;
 
 app.use(express.static(__dirname + "/public"));
 
 // express server listening to port 9000
-const expressServer = app.listen(process.env.PORT || 9000);
+
+const expressServer = app.listen(PORT);
 // socket io listening to the express server
 const io = socketio(expressServer);
 
