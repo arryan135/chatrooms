@@ -1,5 +1,4 @@
-const socket = io("http://localhost:9000"); // connect to main namespace
-const socket2 = io("http://localhost:9000/admin"); // the admin namespace
+const socket = io(); // connect to main namespace
 
 // client listens for message from the server 
 socket.on("messageFromServer", (dataFromServer) => {
@@ -9,11 +8,17 @@ socket.on("messageFromServer", (dataFromServer) => {
   socket.emit("messageToServer", {data: "This is from the client"});
 });
 
-socket.on("joined", msg => console.log(msg));
+socket.on("nsData", nsData => {
+  console.log("The list of nsData has arrived");
 
-socket2.on("welcome", dataFromServer => {
-  console.log(dataFromServer);
-});
+  let namespacesDiv = document.querySelector(".namespaces");
+  namespacesDiv.innerHTML = "";
+  nsData.forEach(ns => {
+    namespacesDiv.innerHTML += `<div class = "namespace"><img src = "${ns.img}"/></div>`
+  })
+})
+
+socket.on("joined", msg => console.log(msg));
 
 document.querySelector("#message-form").addEventListener("submit", evt => {
   evt.preventDefault();
