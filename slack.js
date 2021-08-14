@@ -33,19 +33,19 @@ namespaces.forEach(namespace => {
     // a socket has connected to one of our chatgroup namespaces
     // send that namespace group info back
 
-    nsSocket.emit("nsRoomLoad", namespaces[0].rooms);
+    nsSocket.emit("nsRoomLoad", namespace.rooms);
     nsSocket.on("joinRoom", async (roomToJoin, numberOfUsersCallback) => {
       // deal with chat history once we have it
       nsSocket.join(roomToJoin);
 
-      const nsRoom = namespaces[0].rooms.find(room => room.roomTitle === roomToJoin);
+      const nsRoom = namespace.rooms.find(room => room.roomTitle === roomToJoin);
 
       nsSocket.emit("historyCatchUp", nsRoom.history);
 
       // send back the number of users to all the scokets connected to this room
-      const clients = await io.of("/wiki").in(roomToJoin).allSockets();
+      const clients = await io.of(namespace.endpoint).in(roomToJoin).allSockets();
 
-      io.of("/wiki").in(roomToJoin).emit("updateMembers", (Array.from(clients)).length);
+      io.of(namespace.endpoint).in(roomToJoin).emit("updateMembers", (Array.from(clients)).length);
     });
     nsSocket.on("newMessageToServer", msg => {
       const fullMsg = {
@@ -62,12 +62,12 @@ namespaces.forEach(namespace => {
       }
       
       // find the room object for this room
-      const nsRoom = namespaces[0].rooms.find(room => room.roomTitle === roomTitle[1]);
+      const nsRoom = namespace.rooms.find(room => room.roomTitle === roomTitle[1]);
 
       console.log(nsRoom);
 
       nsRoom.addMessage(fullMsg);
-      io.of("/wiki").to(roomTitle[1]).emit("messageToClients", fullMsg);
+      io.of(namespace.endpoint).to(roomTitle[1]).emit("messageToClients", fullMsg);
     });
   });
 });
