@@ -19,7 +19,8 @@ function joinNs(endpoint){
     let roomNodes = document.getElementsByClassName("room");
     Array.from(roomNodes).forEach(element => {
       element.addEventListener("click", event => {
-        console.log(`Some one clicked on ${event.target.innerText}`);
+        // console.log(`Some one clicked on ${event.target.innerText}`);
+        joinRoom(event.target.innerText);
       });
     });
 

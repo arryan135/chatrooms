@@ -35,9 +35,17 @@ namespaces.forEach(namespace => {
 
     nsSocket.emit("nsRoomLoad", namespace.rooms);
     nsSocket.on("joinRoom", async (roomToJoin, numberOfUsersCallback) => {
+
+      // ability to leave a room and ahead over to another
+      const roomTitle = [];
+      for(let room of nsSocket.rooms){
+          roomTitle.push(room)
+      }
+      nsSocket.leave(roomTitle[1]);
+
+
       // deal with chat history once we have it
       nsSocket.join(roomToJoin);
-
       const nsRoom = namespace.rooms.find(room => room.roomTitle === roomToJoin);
 
       nsSocket.emit("historyCatchUp", nsRoom.history);
