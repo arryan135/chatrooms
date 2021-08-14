@@ -41,7 +41,12 @@ namespaces.forEach(namespace => {
       for(let room of nsSocket.rooms){
           roomTitle.push(room)
       }
+
+      // most recent room roomTitle[1] is now being left
       nsSocket.leave(roomTitle[1]);
+      updateUsersInRoom(namespace, roomTitle[1]);
+
+
 
 
       // deal with chat history once we have it
@@ -50,10 +55,7 @@ namespaces.forEach(namespace => {
 
       nsSocket.emit("historyCatchUp", nsRoom.history);
 
-      // send back the number of users to all the scokets connected to this room
-      const clients = await io.of(namespace.endpoint).in(roomToJoin).allSockets();
-
-      io.of(namespace.endpoint).in(roomToJoin).emit("updateMembers", (Array.from(clients)).length);
+      updateUsersInRoom(namespace, roomToJoin);
     });
     nsSocket.on("newMessageToServer", msg => {
       const fullMsg = {
@@ -79,3 +81,10 @@ namespaces.forEach(namespace => {
     });
   });
 });
+
+async function updateUsersInRoom(namespace, roomToJoin){
+  // send back the number of users to all the scokets connected to this room
+  const clients = await io.of(namespace.endpoint).in(roomToJoin).allSockets();
+
+  io.of(namespace.endpoint).in(roomToJoin).emit("updateMembers", (Array.from(clients)).length);
+}
