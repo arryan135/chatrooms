@@ -1,4 +1,5 @@
 const socket = io(); // connect to main namespace
+let nsSocket = "";
 
 socket.on("nsData", nsData => {
   console.log("The list of nsData has arrived");
