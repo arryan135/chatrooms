@@ -39,28 +39,33 @@ namespaces.forEach(namespace => {
       nsSocket.join(roomToJoin);
 
       const clients = await io.of('/wiki').in(roomToJoin).allSockets();
-      numberOfUsersCallback(Array.from(clients).length);
+      numberOfUsersCallback((Array.from(clients)).length);
 
-      nsSocket.on("newMessageToServer", msg => {
-        console.log(msg);
+      const nsRoom = namespaces[0].rooms.find(room => room.roomTitle === roomToJoin);
 
-        const fullMsg = {
-          text: msg.text,
-          time: Date.now(),
-          username: "rbunch",
-          avatar: "https://via.placeholder.com/30"
-        }
+      nsSocket.emit("historyCatchUp", nsRoom.history);
+    });
+    nsSocket.on("newMessageToServer", msg => {
+      const fullMsg = {
+        text: msg.text,
+        time: Date.now(),
+        username: "rbunch",
+        avatar: "https://via.placeholder.com/30"
+      }
 
-        // send message to all the sockets that are in the room this socket is in
-        console.log(fullMsg);
-        // The user will be in the second room in the object list as the sockets always join its own room in the first connection
-        const roomTitle = [];
-        for(let room of nsSocket.rooms){
-            roomTitle.push(room)
-        }
-        
-        io.of("/wiki").to(roomTitle[1]).emit("messageToClients", fullMsg);
-      });
+      // The user will be in the second room in the object list as the sockets always join its own room in the first connection
+      const roomTitle = [];
+      for(let room of nsSocket.rooms){
+          roomTitle.push(room)
+      }
+      
+      // find the room object for this room
+      const nsRoom = namespaces[0].rooms.find(room => room.roomTitle === roomTitle[1]);
+
+      console.log(nsRoom);
+
+      nsRoom.addMessage(fullMsg);
+      io.of("/wiki").to(roomTitle[1]).emit("messageToClients", fullMsg);
     });
   });
 });
