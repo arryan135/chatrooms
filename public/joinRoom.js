@@ -20,4 +20,9 @@ function joinRoom(roomName){
 
     messageUl.scrollTo(0, messageUl.scrollHeight);
   });
+
+  nsSocket.on("updateMembers", numMembers => {
+    document.querySelector(".curr-room-num-users").innerHTML = `${numMembers} <span class="glyphicon glyphicon-user"></span>`;
+    document.querySelector(".curr-room-text").innerText = `${roomName}`;
+  });
 }
