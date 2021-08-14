@@ -26,6 +26,25 @@ socket.on("nsData", nsData => {
       console.log(`${endPoint} I should go to now`);
     });
   });
+
+  const nsSocket = io("http://localhost:9000/wiki");
+  nsSocket.on("nsRoomLoad", nsRooms => {
+    let roomList = document.querySelector(".room-list");
+    roomList.innerHTML = "";
+    nsRooms.forEach(room => {
+      let glyph = room.privateRoom === "lock" ? "lock" : "globe";
+
+      roomList.innerHTML += `<li class = "room"><span class="glyphicon glyphicon-${glyph}"></span>${room.roomTitle}</li>`
+    });
+
+    // add click listener to each room
+    let roomNodes = document.getElementsByClassName("room");
+    Array.from(roomNodes).forEach(element => {
+      element.addEventListener("click", event => {
+        console.log(`Some one clicked on ${event.target.innerText}`);
+      });
+    });
+  });
 })
 
 socket.on("joined", msg => console.log(msg));
