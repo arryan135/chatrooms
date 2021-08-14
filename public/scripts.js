@@ -1,4 +1,9 @@
-const socket = io(); // connect to main namespace
+const username = prompt("What is your username?");
+const socket = io("/" , {
+  query: {
+    username
+  }
+}); // connect to main namespace
 let nsSocket = "";
 
 socket.on("nsData", nsData => {

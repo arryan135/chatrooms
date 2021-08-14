@@ -28,11 +28,10 @@ io.on("connection", socket => {
 // loop through each namespace and listen for a connection
 namespaces.forEach(namespace => {
   io.of(namespace.endpoint).on("connection", nsSocket => {
-    console.log(`${nsSocket.id} has joined ${namespace.endpoint}`);
+    const username = nsSocket.handshake.query.username;
 
     // a socket has connected to one of our chatgroup namespaces
     // send that namespace group info back
-
     nsSocket.emit("nsRoomLoad", namespace.rooms);
     nsSocket.on("joinRoom", async (roomToJoin, numberOfUsersCallback) => {
 
@@ -61,7 +60,7 @@ namespaces.forEach(namespace => {
       const fullMsg = {
         text: msg.text,
         time: Date.now(),
-        username: "rbunch",
+        username,
         avatar: "https://via.placeholder.com/30"
       }
 
