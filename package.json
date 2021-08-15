@@ -2,7 +2,7 @@
   "name": "socketio_101",
   "version": "1.0.0",
   "description": "",
-  "main": "basics.js",
+  "main": "slack.js",
   "scripts": {
     "start": "node slack.js"
   },
