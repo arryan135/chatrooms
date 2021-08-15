@@ -1,5 +1,5 @@
 const username = prompt("What is your username?");
-const socket = io("/" , {
+const socket = io({
   query: {
     username
   }
